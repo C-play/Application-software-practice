@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysPetMapper">
+
+    <resultMap type="SysPet" id="SysPetResult">
+        <id     property="petId"      column="pet_id"      />
+        <result property="petName"    column="pet_name"    />
+        <result property="petKind"     column="pet_kind"     />
+        <result property="petAge"   column="pet_age"   />
+        <result property="petBirth"    column="pet_birth"    />
+        <result property="petWeight"      column="pet_weight"      />
+        <result property="petColor"    column="pet_color"    />
+        <result property="petLike"      column="pet_like"      />
+    </resultMap>
+
+    <sql id="selectPetVo">
+        select pet_id , pet_name , pet_kind , pet_age , pet_birth , pet_weight , pet_color , pet_like
+        from sys_pet
+    </sql>
+
+    <select id="selectSysPetById" parameterType="Long" resultMap="SysPetResult">
+        <include refid="selectPetVo"/>
+        where pet_id = #{petId}
+    </select>
+
+    <select id="selectSysPetList" parameterType="SysPet" resultMap="SysPetResult">
+        select pet_id , pet_name , pet_kind , pet_age , pet_birth , pet_weight , pet_color , pet_like
+        from sys_pet
+        <if test="petName != null and petName != ''">
+            AND pet_name like concat('%', #{petName}, '%')
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+
+    <insert id="insertSysPet" parameterType="SysPet" useGeneratedKeys="true" keyProperty="petId">
+        insert into sys_pet(pet_id,pet_name,pet_kind,pet_age,pet_birth,pet_weight,pet_color,pet_like
+        )values(#{petId},#{petName},#{petKind},#{petAge},#{petBirth},#{petWeight},#{petColor},#{petLike}
+        )
+    </insert>
+
+    <update id="updateSysPet" parameterType="SysPet">
+        update sys_pet
+        <set>
+            <if test="petId != null and petId != 0">pet_id = #{petId},</if>
+            <if test="petName != null and petName != ''">pet_name = #{petName},</if>
+            <if test="petKind != null and petKind != ''">pet_age = #{petAge},</if>
+            <if test="petBirth != null and petBirth != ''">pet_birth = #{petBirth},</if>
+            <if test="petWeight != null and petWeight != ''">pet_weight = #{petWeight},</if>
+            <if test="petColor != null and petColor != ''">pet_color = #{petColor},</if>
+            <if test="petLike != null and petLike != ''">pet_like = #{petLike},</if>
+        </set>
+        where pet_id = #{petId}
+    </update>
+
+    <delete id="deleteSysPetById" parameterType="Long">
+        delete from sys_pet where pet_id = #{petId}
+    </delete>
+
+    <delete id="deleteSysPetByIds" parameterType="String">
+        delete from sys_pet where pet_id in
+        <foreach collection="array" item="petId" open="(" separator="," close=")">
+            #{petId}
+        </foreach>
+    </delete>
+
+
+</mapper>
