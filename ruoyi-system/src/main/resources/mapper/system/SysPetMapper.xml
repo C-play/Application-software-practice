@@ -26,15 +26,33 @@ PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
     </select>
 
     <select id="selectSysPetList" parameterType="SysPet" resultMap="SysPetResult">
-        select pet_id , pet_name , pet_kind , pet_age , pet_birth , pet_weight , pet_color , pet_like
-        from sys_pet
-        <if test="petName != null and petName != ''">
-            AND pet_name like concat('%', #{petName}, '%')
-        </if>
+        <include refid="selectPetVo"/>
+        <where>
+            <if test="petName != null and petName != ''">
+                AND pet_name like concat('%', #{petName}, '%')
+            </if>
+            <if test="petAge != null and petAge != ''">
+                AND pet_age = #{petAge}
+            </if>
+            <if test="petKind != null and petKind != ''">
+                AND pet_kind = #{petKind}
+            </if>
+            <if test="petBirth != null and petBirth != ''">
+                AND pet_birth like concat('%', #{petBirth}, '%')
+            </if>
+            <if test="petWeight != null and petWeight != ''">
+                AND pet_weight = #{petWeight}
+            </if>
+            <if test="petLike != null and petLike != ''">
+                AND pet_like like concat('%', #{petLike}, '%')
+            </if>
+            <if test="petColor != null and petColor != ''">
+                AND pet_color like concat('%', #{petColor}, '%')
+            </if>
+        </where>
         <!-- 数据范围过滤 -->
         ${params.dataScope}
     </select>
-
 
     <insert id="insertSysPet" parameterType="SysPet" useGeneratedKeys="true" keyProperty="petId">
         insert into sys_pet(pet_id,pet_name,pet_kind,pet_age,pet_birth,pet_weight,pet_color,pet_like

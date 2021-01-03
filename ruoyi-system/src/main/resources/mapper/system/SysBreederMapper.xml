@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysBreederMapper">
+    
+    <resultMap type="SysBreeder" id="SysBreederResult">
+        <result property="breederId"    column="breeder_id"    />
+        <result property="breederName"    column="breeder_name"    />
+        <result property="breederSl"    column="breeder_sl"    />
+        <result property="breederAge"    column="breeder_age"    />
+        <result property="breederBirth"    column="breeder_birth"    />
+    </resultMap>
+
+    <sql id="selectSysBreederVo">
+        select breeder_id, breeder_name, breeder_sl, breeder_age, breeder_birth from sys_breeder
+    </sql>
+
+    <select id="selectSysBreederList" parameterType="SysBreeder" resultMap="SysBreederResult">
+        <include refid="selectSysBreederVo"/>
+        <where>  
+            <if test="breederName != null  and breederName != ''"> and breeder_name like concat('%', #{breederName}, '%')</if>
+            <if test="breederSl != null  and breederSl != ''"> and breeder_sl = #{breederSl}</if>
+            <if test="breederAge != null "> and breeder_age = #{breederAge}</if>
+            <if test="breederBirth != null  and breederBirth != ''"> and breeder_birth = #{breederBirth}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysBreederById" parameterType="Long" resultMap="SysBreederResult">
+        <include refid="selectSysBreederVo"/>
+        where breeder_id = #{breederId}
+    </select>
+        
+    <insert id="insertSysBreeder" parameterType="SysBreeder" useGeneratedKeys="true" keyProperty="breederId">
+        insert into sys_breeder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="breederName != null">breeder_name,</if>
+            <if test="breederSl != null and breederSl != ''">breeder_sl,</if>
+            <if test="breederAge != null">breeder_age,</if>
+            <if test="breederBirth != null">breeder_birth,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="breederName != null">#{breederName},</if>
+            <if test="breederSl != null and breederSl != ''">#{breederSl},</if>
+            <if test="breederAge != null">#{breederAge},</if>
+            <if test="breederBirth != null">#{breederBirth},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysBreeder" parameterType="SysBreeder">
+        update sys_breeder
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="breederName != null">breeder_name = #{breederName},</if>
+            <if test="breederSl != null and breederSl != ''">breeder_sl = #{breederSl},</if>
+            <if test="breederAge != null">breeder_age = #{breederAge},</if>
+            <if test="breederBirth != null">breeder_birth = #{breederBirth},</if>
+        </trim>
+        where breeder_id = #{breederId}
+    </update>
+
+    <delete id="deleteSysBreederById" parameterType="Long">
+        delete from sys_breeder where breeder_id = #{breederId}
+    </delete>
+
+    <delete id="deleteSysBreederByIds" parameterType="String">
+        delete from sys_breeder where breeder_id in 
+        <foreach item="breederId" collection="array" open="(" separator="," close=")">
+            #{breederId}
+        </foreach>
+    </delete>
+
+</mapper>
